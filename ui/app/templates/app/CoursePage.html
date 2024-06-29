@@ -1,0 +1,114 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block extracss %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .image {
+            flex: 1;
+            padding: 10px;
+        }
+        .image img {
+            width: 100%;
+            height: auto;
+        }
+        .details {
+            flex: 2;
+            padding: 10px;
+        }
+        .details h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .details p {
+            margin-bottom: 10px;
+        }
+        .details a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .details a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+{% endblock extracss %}
+{% block productDetails %}
+    <div class="container">
+        <div class="image">
+            <img src="https://via.placeholder.com/150" alt="Product Image">
+        </div>
+        <div class="details">
+            <h1 id="product-title">Product Title</h1>
+            <p id="product-category"><strong>Category:</strong> </p>
+            <p id="product-description"><strong>Description:</strong> </p>
+            <p><strong>URL:</strong> <a id="product-url" href="#" target="_blank">Product Link</a></p>
+        </div>
+    </div>
+    <div class="error" id="error-message">Error fetching product details. Please try again.</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const course_id = {{ course_id }};; // Example product ID, replace with dynamic value if needed
+            console.log("Document loaded, course_id:", course_id); // Debugging statement
+            fetchProductDetails(course_id);
+        });
+
+        function fetchProductDetails(course_id) {
+            console.log("Fetching product details for course_id:", course_id); // Debugging statement
+
+            const errorMessage = document.getElementById('error-message');
+            const productTitle = document.getElementById('product-title');
+            const productCategory = document.getElementById('product-category');
+            const productDescription = document.getElementById('product-description');
+            const productUrl = document.getElementById('product-url');
+
+            const token = 'YOUR_JWT_TOKEN'; // Replace with actual token
+
+            fetch(`http://127.0.0.1:8000/users/productsDetails/${course_id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    console.log("API response received:", response); // Debugging statement
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data); // Debugging statement
+
+                    productTitle.textContent = data.title; // Ensure keys match API response
+                    productCategory.textContent = `Category: ${data.category}`;
+                    productDescription.textContent = `Description: ${data.description}`;
+                    productUrl.href = data.url;
+                    productUrl.textContent = data.url;
+                    errorMessage.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error fetching product details:', error);
+                    errorMessage.style.display = 'block';
+                });
+        }
+    </script>
+{% endblock productDetails %}

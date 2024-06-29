@@ -1,0 +1,8 @@
+.course-cont{
+background-color:#fff;
+background-image: linear-gradient( Orgba(110, 77, 123, 0.1),#fff);
+background-image: -webkit-linear-gradient( O rgba(110, 77, 123, 0.1),#fff);
+background-image: --moz-linear-gradient(rgba(110, 77, 123, 0.1),#fff);
+background-image: -ms-linear-gradient(rgba(110, 77, 123, 0.1),#fff);
+background-image: -ms-linear-gradient(rgba(110, 77, 123, 0.1),#fff);
+}

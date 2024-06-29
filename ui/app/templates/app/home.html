@@ -1,0 +1,275 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block extracss %}
+<style>
+  body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+  }
+  .card-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+  }
+  .card {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 300px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.2s;
+  }
+  .card:hover {
+      transform: scale(1.05);
+  }
+  .card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+  }
+  .card h3 {
+      margin: 16px 0;
+  }
+  .card p {
+      color: #555;
+      padding: 0 16px;
+  }
+  .card a {
+      display: inline-block;
+      margin: 16px 0;
+      color: #007bff;
+      text-decoration: none;
+  }
+  .card a:hover {
+      text-decoration: underline;
+  }
+  @media (max-width: 768px) {
+      .card {
+          width: 45%;
+      }
+  }
+  @media (max-width: 480px) {
+      .card {
+          width: 90%;
+      }
+  }
+</style>
+{% endblock extracss %}
+
+{% block banner-slider %}
+  <div id="carouselExampleSlidesOnly" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'app/images/banner/B11.png' %}" class="d-block w-100" alt="banner image">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'app/images/banner/B12.png' %}" class="d-block w-100" alt="banner image">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'app/images/banner/B13.png' %}" class="d-block w-100" alt="banner image">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'app/images/banner/B14.png' %}" class="d-block w-100" alt="banner image">
+      </div>
+    </div>
+  </div>
+
+</br></br>
+
+{% endblock banner-slider %}
+
+{% block information %}
+<div class="container">
+  <div class="row bg-success text-center p-5 text-white border-bottom shadow">
+      <h1> Recommendation </h1>
+      <small class="fs-5">
+          This Course Recommendation Project leverages advanced machine learning algorithms to personalize educational pathways for students.
+          By analyzing individual learning patterns, preferences, and performance data, the system suggests tailored courses that maximize academic success and engagement. The project aims to enhance the educational experience by providing targeted recommendations, 
+          ultimately helping students achieve their career and academic goals efficiently.
+      </small>
+  </div>
+
+</div>
+</br></br>
+  
+    <div class="card-container" id="recommendations"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                alert('No token found, please log in');
+                window.location.href = '/login';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/users/me', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+
+                const userData = await response.json();
+                console.log('User details fetched successfully', userData);
+
+                // Fetch recommendations
+                fetchRecommendations(token);
+
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                document.getElementById('error-message').textContent = 'Failed to load user details. Please try again later.';
+            }
+        });
+
+        async function fetchRecommendations(token) {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/users/me/recommendations', {
+
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch recommendations');
+                }
+
+                const data = await response.json();
+                console.log('Recommendations fetched successfully', data);
+                displayRecommendations(data.course_list);
+
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                document.getElementById('error-message').textContent = 'Failed to load recommendations. Please try again later.';
+            }
+        }
+
+        function displayRecommendations(courses) {
+            const recommendationsDiv = document.getElementById('recommendations');
+            courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.className = 'card';
+                courseCard.innerHTML = `
+                    <img src="{% static 'app/images/product/C1.jpg' %}" alt="Course Image">
+                    <h3><a href="/CoursePage/${course.id}/">${course.title}</a></h3>
+                    <p>Category: ${course.category}</p>
+                    <a href="${course.url}" target="_blank">Course Link</a>
+                `;
+                recommendationsDiv.appendChild(courseCard);
+            });
+        }
+    </script>
+
+{% endblock information %} 
+
+
+
+
+
+{% block main-content %}
+    <div class="container">
+    {% comment %} <h2 class="text-center"> Courses </h2>
+    <br><br>
+    <div class="row container">
+        <div class = "col-md-4 col-sm-4 mi-go wow fadelnUp"
+        data-wow-duration="ls" data-wow-delay= "0.6s"
+        style="animation-duration: 1s; animation-delay: 0.6s;
+        animation-name: none;">
+            <div class="goodnesssec buttermilk course-cont">
+              <a href="#">
+                <div class="goodnessseccont text-center" >
+                  <img src="{% static 'app/images/product/C2.jpg' %}" class="img-responsive"  alt="">
+                  <p class="m1kpro">Data Science</p>
+                </div>
+              </a>
+            </div>
+        </div>
+        <div class = "col-md-4 col-sm-4 mi-go wow fadelnUp"
+        data-wow-duration="ls" data-wow-delay= "0.6s"
+        style="animation-duration: 1s; animation-delay: 0.6s;
+        animation-name: none;">
+            <div class="goodnesssec buttermilk course-cont">
+              <a href="#">
+                <div class="goodnessseccont text-center" >
+                  <img src="{% static 'app/images/product/C1.jpg' %}" class="img-responsive"  alt="">
+                  <p class="m1kpro">Android</p>
+                </div>
+              </a>
+            </div>     
+        </div>
+        <div class = "col-md-4 col-sm-4 mi-go wow fadelnUp"
+        data-wow-duration="ls" data-wow-delay= "0.6s"
+        style="animation-duration: 1s; animation-delay: 0.6s;
+        animation-name: none;">
+            <div class="goodnesssec buttermilk course-cont">
+              <a href="#">
+                <div class="goodnessseccont text-center" >
+                  <img src="{% static 'app/images/product/C3.jpg' %}" class="img-responsive"  alt="">
+                  <p class="m1kpro">Machine learning</p>
+                </div>
+              </a>
+            </div>      
+        </div>
+        </a>
+    </div>
+    <div class="row container">
+      <div class = "col-md-4 col-sm-4 mi-go wow fadelnUp"
+      data-wow-duration="ls" data-wow-delay= "0.6s"
+      style="animation-duration: 1s; animation-delay: 0.6s;
+      animation-name: none;">
+          <div class="goodnesssec buttermilk course-cont">
+            <a href="#">
+              <div class="goodnessseccont text-center" >
+                <img src="{% static 'app/images/product/C2.jpg' %}" class="img-responsive"  alt="">
+                <p class="m1kpro">Data Science</p>
+              </div>
+            </a>
+          </div>
+      </div>
+      <div class = "col-md-4 col-sm-4 mi-go wow fadelnUp"
+      data-wow-duration="ls" data-wow-delay= "0.6s"
+      style="animation-duration: 1s; animation-delay: 0.6s;
+      animation-name: none;">
+          <div class="goodnesssec buttermilk course-cont">
+            <a href="#">
+              <div class="goodnessseccont text-center" >
+                <img src="{% static 'app/images/product/C1.jpg' %}" class="img-responsive"  alt="">
+                <p class="m1kpro">Android</p>
+              </div>
+            </a>
+          </div>     
+      </div>
+      <div class = "col-md-4 col-sm-4 mi-go wow fadelnUp"
+      data-wow-duration="ls" data-wow-delay= "0.6s"
+      style="animation-duration: 1s; animation-delay: 0.6s;
+      animation-name: none;">
+          <div class="goodnesssec buttermilk course-cont">
+            <a href="#">
+              <div class="goodnessseccont text-center" >
+                <img src="{% static 'app/images/product/C3.jpg' %}" class="img-responsive"  alt="">
+                <p class="m1kpro">Machine learning</p>
+              </div>
+            </a>
+          </div>      
+      </div>
+      </a>
+  </div> {% endcomment %}
+    
+    <br/> <br/>
+</div>
+{% endblock main-content %}
+
+

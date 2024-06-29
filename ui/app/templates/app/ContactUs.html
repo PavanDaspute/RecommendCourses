@@ -1,0 +1,90 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block extracss %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .contact-us {
+            text-align: center;
+        }
+        .contact-us h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        .contact-us p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .contact-details {
+            margin-top: 20px;
+        }
+        .contact-details p {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .contact-details img {
+            margin-right: 10px;
+            width: 24px;
+            height: 24px;
+        }
+        .social-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .social-links a {
+            color: #555;
+            font-size: 24px;
+            text-decoration: none;
+        }
+        .social-links img {
+            width: 24px;
+            height: 24px;
+        }
+        .social-links a:hover {
+            color: #1a73e8;
+        }
+    </style>
+{% endblock extracss %}
+
+
+{% block contactUs %}
+    <div class="container">
+        <div class="contact-us">
+            <h1>Contact Us</h1>
+            <p>If you have any questions, feel free to reach out to us through the following contact details or connect with us on social media.</p>
+        </div>
+        <div class="contact-details">
+            <p><img src="{% static "app/images/icons/phone_icon.svg" %}" alt="Phone Icon"> Contact No: +123-456-7890</p>
+            <p><img src="{% static "app/images/icons/email_icon.svg" %}" alt="Email Icon"> Email: pavandaspute1205@gmail.com</p>
+        </div>
+        <div class="social-links">
+            <a href="" target="_blank">
+                <img src="{% static "app/images/icons/linkedin_icon.svg" %}" alt="LinkedIn Icon">
+            </a>
+            <a href="https://www.instagram.com/yourprofile" target="_blank">
+                <img src="{% static "app/images/icons/instagram_icon.svg" %}"alt="Instagram Icon">
+            </a>
+        </div>
+    </div>
+{% endblock contactUs %}
+
+

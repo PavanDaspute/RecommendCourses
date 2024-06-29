@@ -1,0 +1,125 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Register {% endblock title %}
+{% block extracss %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        form {
+            background: #fff;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 1em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            color: #555;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"], input[type="text"], textarea {
+            width: calc(100% - 20px);
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75em;
+            border: none;
+            border-radius: 5px;
+            background: #5cb85c;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #4cae4c;
+        }
+    </style>
+{% endblock extracss %}
+
+{% block RegisterForm %}
+    <div class="container my-5">
+        <form id="registration-form">
+            <h1>Register</h1>
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="preferences">Preferences:</label>
+                <textarea class="form-control" id="preferences" name="preferences"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-3">Register</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const first_name = document.getElementById('first_name').value;
+            const last_name = document.getElementById('last_name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const preferences = document.getElementById('preferences').value;
+
+            console.log(`Attempting registration for email: ${email}`);
+
+            const response = await fetch('http://127.0.0.1:8000/users', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    first_name,
+                    last_name,
+                    email,
+                    password,
+                    preferences
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log('Registration successful', data);
+                alert("Registered successfully. Please login.");
+                window.location.href = "/login";
+            } else {
+                console.error('Registration failed', data);
+                alert("Registration failed: " + (data.detail || "Unknown error"));
+            }
+        });
+    </script>
+{% endblock RegisterForm %}

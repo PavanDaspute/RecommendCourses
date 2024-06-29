@@ -1,0 +1,1 @@
+Select Category, count(Category) from Courses_data group by Category

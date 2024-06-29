@@ -1,0 +1,115 @@
+{% extends "app/base.html" %}
+{% load static %}
+{% block title %} Home {% endblock title %}
+{% block extracss %}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .image {
+            flex: 1;
+            padding: 10px;
+        }
+        .image img {
+            width: 100%;
+            height: auto;
+        }
+        .details {
+            flex: 2;
+            padding: 10px;
+        }
+        .details h1 {
+            font-size: 24px;a
+            margin-bottom: 20px;
+        }
+        .details p {
+            margin-bottom: 10px;
+        }
+        .details a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .details a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            display: none;
+        }
+    </style>
+{% endblock extracss %}
+{% block userDetails %}
+    <div class="container">
+        <div class="image">
+            <img src="{% static "app/images/profile_img.jpeg" %}" alt="User Image">
+        </div>
+        <div class="details">
+            <h1 id="username">Username</h1>
+            <p id="first-name"><strong>First Name:</strong> </p>
+            <p id="last-name"><strong>Last Name:</strong> </p>
+            <p id="email"><strong>Email:</strong> </p>
+            <p id="preferences"><strong>Preferences:</strong> </p>
+        </div>
+    </div>
+    <div class="error" id="error-message">Error fetching user details. Please try again.</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            console.log("Document loaded");
+            fetchUserDetails();
+        });
+
+        function fetchUserDetails() {
+            console.log("Fetching user details"); // Debugging statement
+
+            const errorMessage = document.getElementById('error-message');
+            const username = document.getElementById('username');
+            const firstName = document.getElementById('first-name');
+            const lastName = document.getElementById('last-name');
+            const email = document.getElementById('email');
+            const preferences = document.getElementById('preferences');
+
+            const token = localStorage.getItem('access_token'); // Assuming token is stored in localStorage
+
+            fetch('http://127.0.0.1:8000/users/me', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    console.log("API response received:", response); // Debugging statement
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Data received:", data); // Debugging statement
+
+                    username.textContent = data.username; // Ensure keys match API response
+                    firstName.textContent = `First Name: ${data.first_name}`;
+                    lastName.textContent = `Last Name: ${data.last_name}`;
+                    email.textContent = `Email: ${data.email}`;
+                    preferences.textContent = `Preferences: ${data.preferences || 'N/A'}`;
+                    errorMessage.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error fetching user details:', error);
+                    errorMessage.style.display = 'block';
+                });
+        }
+    </script>
+{% endblock userDetails %}
